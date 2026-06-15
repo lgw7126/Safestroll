@@ -660,3 +660,300 @@ body {
   gap: var(--gap);
   overflow-y: auto;
 }
+
+/* ══════════════════════════════════════
+   SOS — Button (on normal screens)
+══════════════════════════════════════ */
+.btn--sos {
+  background: #C0392B;
+  color: var(--white);
+  min-height: 90px;
+  border-radius: var(--radius-lg);
+  border: none;
+  letter-spacing: 0.02em;
+}
+
+.btn--sos:hover {
+  background: #A93226;
+}
+
+.btn--sos:active {
+  transform: scale(0.96);
+  opacity: 0.88;
+}
+
+.btn--sos-walk {
+  min-height: 72px;
+}
+
+/* ══════════════════════════════════════
+   SOS Confirm Screen
+══════════════════════════════════════ */
+.sos-confirm-screen {
+  background: #7B1818;
+  margin: -20px -20px -32px;
+  padding: 20px 20px 32px;
+  color: var(--white);
+}
+
+.sos-confirm__top {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+
+.sos-confirm__label {
+  font-size: 3rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: var(--white);
+  line-height: 1;
+}
+
+.sos-confirm__title-kr {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 12px;
+  color: var(--white);
+}
+
+.sos-confirm__title-en {
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-top: 4px;
+}
+
+.sos-confirm__contact {
+  margin-top: 12px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  background: rgba(255,255,255,0.15);
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  display: inline-block;
+}
+
+.sos-countdown-block {
+  text-align: center;
+  padding: 24px 20px;
+}
+
+.sos-countdown-bar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 99px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.sos-countdown-fill {
+  height: 100%;
+  background: var(--white);
+  border-radius: 99px;
+  transition: width 1s linear;
+}
+
+.sos-countdown-num {
+  font-size: 5rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--white);
+}
+
+.sos-countdown-label-kr {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+.sos-countdown-label-en {
+  font-size: 0.8rem;
+  opacity: 0.65;
+  margin-top: 2px;
+}
+
+.btn--sos-cancel {
+  background: rgba(255,255,255,0.15);
+  color: var(--white);
+  border: 2.5px solid rgba(255,255,255,0.5);
+  border-radius: var(--radius-lg);
+  min-height: 90px;
+  width: 100%;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 20px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn--sos-cancel:active {
+  background: rgba(255,255,255,0.25);
+  transform: scale(0.97);
+}
+
+/* ══════════════════════════════════════
+   SOS Active Screen
+══════════════════════════════════════ */
+.sos-active-screen {
+  background: #FEF0F0;
+  margin: -20px -20px -32px;
+  padding: 20px 20px 32px;
+}
+
+.sos-active-banner {
+  background: #C0392B;
+  color: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  text-align: center;
+}
+
+.sos-active-banner__kr {
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.sos-active-banner__en {
+  font-size: 0.9rem;
+  opacity: 0.85;
+  margin-top: 4px;
+}
+
+.location-status {
+  font-size: 1rem;
+  color: var(--text-muted);
+  padding: 8px 0;
+  line-height: 1.6;
+}
+
+.location-status--error {
+  color: var(--alert);
+}
+
+.location-map-link {
+  color: var(--teal);
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+}
+
+.location-coords {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn--sos-call {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #C0392B;
+  color: var(--white);
+  border-radius: var(--radius-lg);
+  min-height: 100px;
+  text-decoration: none;
+  text-align: center;
+  padding: 18px 20px;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn--sos-call:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+.btn--119 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: #E67E22;
+  color: var(--white);
+  border-radius: var(--radius-lg);
+  min-height: 100px;
+  text-decoration: none;
+  text-align: center;
+  padding: 18px 20px;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.btn--119:active {
+  opacity: 0.85;
+  transform: scale(0.97);
+}
+
+/* ══════════════════════════════════════
+   Places Screen
+══════════════════════════════════════ */
+.place-item {
+  background: var(--white);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-left: 4px solid var(--teal);
+}
+
+.place-item__name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  flex: 1;
+  color: var(--text);
+}
+
+.place-item__actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.place-btn {
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 14px;
+  min-height: 52px;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.place-btn:active {
+  transform: scale(0.95);
+  opacity: 0.8;
+}
+
+.place-btn--nav {
+  background: var(--teal);
+  color: var(--white);
+  min-width: 72px;
+}
+
+.place-btn--delete {
+  background: var(--cream-dark);
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  min-width: 44px;
+  padding: 10px;
+}

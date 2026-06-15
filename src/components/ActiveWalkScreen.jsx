@@ -13,16 +13,12 @@ function formatCountdown(totalSeconds) {
 
 function formatTime(isoString) {
   return new Date(isoString).toLocaleTimeString('ko-KR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
+    hour: '2-digit', minute: '2-digit', hour12: false
   })
 }
 
-export default function ActiveWalkScreen({ walk, onCheckIn, onExpire }) {
-  const [secondsLeft, setSecondsLeft] = useState(() =>
-    getSecondsLeft(walk.expectedReturnTime)
-  )
+export default function ActiveWalkScreen({ walk, onCheckIn, onExpire, onSOS }) {
+  const [secondsLeft, setSecondsLeft] = useState(() => getSecondsLeft(walk.expectedReturnTime))
   const expiredRef = useRef(false)
 
   useEffect(() => {
@@ -71,6 +67,12 @@ export default function ActiveWalkScreen({ walk, onCheckIn, onExpire }) {
       </div>
 
       <div className="spacer" />
+
+      {/* SOS — above check-in */}
+      <button className="btn btn--sos btn--sos-walk" onClick={onSOS}>
+        <span className="btn__kr">긴급 SOS</span>
+        <span className="btn__en">Emergency Alert</span>
+      </button>
 
       <button className="btn btn--safe" onClick={onCheckIn}>
         <span className="btn__kr">집에 돌아왔어요!</span>

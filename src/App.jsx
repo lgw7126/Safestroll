@@ -5,45 +5,43 @@ import ActiveWalkScreen from './components/ActiveWalkScreen'
 import AlertScreen from './components/AlertScreen'
 import HistoryScreen from './components/HistoryScreen'
 import ContactSetupScreen from './components/ContactSetupScreen'
+import SOSConfirmScreen from './components/SOSConfirmScreen'
+import SOSActiveScreen from './components/SOSActiveScreen'
+import PlacesScreen from './components/PlacesScreen'
 
-const KEY_WALK = 'ss_walk'
+const KEY_WALK    = 'ss_walk'
 const KEY_HISTORY = 'ss_history'
 const KEY_CONTACT = 'ss_contact'
+const KEY_PLACES  = 'ss_places'
 
 function loadJSON(key, fallback) {
   try {
     const v = localStorage.getItem(key)
     return v ? JSON.parse(v) : fallback
-  } catch {
-    return fallback
-  }
+  } catch { return fallback }
 }
 
 function saveJSON(key, value) {
   try {
-    if (value == null) {
-      localStorage.removeItem(key)
-    } else {
-      localStorage.setItem(key, JSON.stringify(value))
-    }
-  } catch {
-    // Storage unavailable (private mode, quota exceeded)
-  }
+    if (value == null) localStorage.removeItem(key)
+    else localStorage.setItem(key, JSON.stringify(value))
+  } catch { /* quota or private mode */ }
 }
 
 export default function App() {
-  const [screen, setScreen] = useState('home')
-  const [activeWalk, setActiveWalk] = useState(() => loadJSON(KEY_WALK, null))
-  const [history, setHistory] = useState(() => loadJSON(KEY_HISTORY, []))
-  const [contact, setContact] = useState(() => loadJSON(KEY_CONTACT, { name: '', phone: '' }))
-  const [alertFired, setAlertFired] = useState(false)
+  const [screen, setScreen]           = useState('home')
+  const [activeWalk, setActiveWalk]   = useState(() => loadJSON(KEY_WALK, null))
+  const [history, setHistory]         = useState(() => loadJSON(KEY_HISTORY, []))
+  const [contact, setContact]         = useState(() => loadJSON(KEY_CONTACT, { name: '', phone: '' }))
+  const [places, setPlaces]           = useState(() => loadJSON(KEY_PLACES, []))
+  const [alertFired, setAlertFired]   = useState(false)
+  const [prevScreen, setPrevScreen]   = useState('home')
 
-  // On mount: restore screen state from persisted walk
+  // Restore screen on mount
   useEffect(() => {
     const walk = loadJSON(KEY_WALK, null)
     if (!walk) return
-    const expired = Date.now() >= new Date(walk.expectedReturnTime).getTime()
-    if (expired) {
+    if (Date.now() >= new Date(walk.expectedReturnTime).getTime()) {
       setAlertFired(true)
       setScreen('alert')
     } else {
@@ -51,22 +49,19 @@ export default function App() {
     }
   }, [])
 
-  // Load contact reference inside triggerAlert
   const triggerAlert = useCallback((contactRef) => {
     setAlertFired(true)
     setScreen('alert')
-
     if ('Notification' in window && Notification.permission === 'granted') {
-      const name = contactRef?.name || '가족'
       new Notification('안전산책 — 귀가 시간 초과', {
-        body: `${name}께 알림: 어르신께서 예정 귀가 시간을 초과했습니다.`,
+        body: `${contactRef?.name || '가족'}께 알림: 어르신께서 귀가 예정 시간을 초과했습니다.`,
         requireInteraction: true,
         tag: 'safestroll-alert'
       })
     }
   }, [])
 
-  // Poll every 10 s to detect walk expiry while app is open
+  // Poll every 10 s for walk expiry
   useEffect(() => {
     if (!activeWalk || alertFired) return
     const id = setInterval(() => {
@@ -85,28 +80,24 @@ export default function App() {
     setActiveWalk(walk)
     setAlertFired(false)
     saveJSON(KEY_WALK, walk)
-
     if ('Notification' in window && Notification.permission === 'default') {
       Notification.requestPermission()
     }
-
     setScreen('active')
   }
 
   const checkInSafe = () => {
     if (!activeWalk) return
-    const now = new Date()
     const entry = {
       id: Date.now(),
       departureTime: activeWalk.departureTime,
-      returnTime: now.toISOString(),
+      returnTime: new Date().toISOString(),
       expectedReturnTime: activeWalk.expectedReturnTime,
       onTime: !alertFired
     }
     const updated = [entry, ...history].slice(0, 50)
     setHistory(updated)
     saveJSON(KEY_HISTORY, updated)
-
     setActiveWalk(null)
     setAlertFired(false)
     saveJSON(KEY_WALK, null)
@@ -119,9 +110,20 @@ export default function App() {
     setScreen('home')
   }
 
-  const clearHistory = () => {
-    setHistory([])
-    saveJSON(KEY_HISTORY, null)
+  const savePlaces = (newPlaces) => {
+    setPlaces(newPlaces)
+    saveJSON(KEY_PLACES, newPlaces)
+  }
+
+  const goSOS = (from) => {
+    setPrevScreen(from)
+    setScreen('sos-confirm')
+  }
+
+  const onSOSConfirm = useCallback(() => setScreen('sos-active'), [])
+
+  const onSOSDismiss = () => {
+    setScreen(activeWalk ? (alertFired ? 'alert' : 'active') : 'home')
   }
 
   const screenMap = {
@@ -133,6 +135,8 @@ export default function App() {
         onResumeWalk={() => setScreen(alertFired ? 'alert' : 'active')}
         onHistory={() => setScreen('history')}
         onContact={() => setScreen('contact-setup')}
+        onPlaces={() => setScreen('places')}
+        onSOS={() => goSOS('home')}
       />
     ),
     setup: (
@@ -146,6 +150,7 @@ export default function App() {
         walk={activeWalk}
         onCheckIn={checkInSafe}
         onExpire={() => triggerAlert(contact)}
+        onSOS={() => goSOS('active')}
       />
     ),
     alert: (
@@ -153,13 +158,14 @@ export default function App() {
         walk={activeWalk}
         contact={contact}
         onCheckIn={checkInSafe}
+        onSOS={() => goSOS('alert')}
       />
     ),
     history: (
       <HistoryScreen
         history={history}
         onBack={() => setScreen('home')}
-        onClear={clearHistory}
+        onClear={() => { setHistory([]); saveJSON(KEY_HISTORY, null) }}
       />
     ),
     'contact-setup': (
@@ -167,6 +173,26 @@ export default function App() {
         contact={contact}
         onSave={saveContact}
         onBack={() => setScreen('home')}
+      />
+    ),
+    places: (
+      <PlacesScreen
+        places={places}
+        onSave={savePlaces}
+        onBack={() => setScreen('home')}
+      />
+    ),
+    'sos-confirm': (
+      <SOSConfirmScreen
+        contact={contact}
+        onConfirm={onSOSConfirm}
+        onCancel={() => setScreen(prevScreen)}
+      />
+    ),
+    'sos-active': (
+      <SOSActiveScreen
+        contact={contact}
+        onDismiss={onSOSDismiss}
       />
     )
   }
